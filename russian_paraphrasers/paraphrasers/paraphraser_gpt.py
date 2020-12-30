@@ -63,6 +63,7 @@ class GPTParaphraser(Paraphraser):
         top_p: float = 0.9,
         max_length: int = 100,
         repetition_penalty: float = 1.5,
+        threshold:float = 0.7
     ) -> Dict:
         """
         Generate paraphrase. You can set parameters
@@ -73,6 +74,7 @@ class GPTParaphraser(Paraphraser):
         :param top_p: top_p
         :param max_length: max_length (default is -1)
         :param repetition_penalty: repetition_penalty
+        :param threshold: param for cosine similarity range
         :return: dict with fields
         obligatory: origin, predictions;
         optional: warning, best_candidates, average_metrics
@@ -83,6 +85,7 @@ class GPTParaphraser(Paraphraser):
             result["warning"] = warning
 
         for sentence in sentences:
+            print(sentence)
             my_sentence = "<s>{} === ".format(sentence)
 
             encoded_prompt = self.tokenizer.encode(
@@ -133,7 +136,7 @@ class GPTParaphraser(Paraphraser):
             sentence_res = {"predictions": generated_sequences}
             best_candidates = []
             if self.range_cand:
-                best_candidates = range_candidates(generated_sequences, sentence, self.smodel)
+                best_candidates = range_candidates(generated_sequences, sentence, self.smodel, threshold=threshold)
                 sentence_res["best_candidates"] = best_candidates
             if self.make_eval:
                 if not best_candidates:

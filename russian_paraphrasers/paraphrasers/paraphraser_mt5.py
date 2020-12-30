@@ -63,6 +63,7 @@ class Mt5Paraphraser(Paraphraser):
         top_p: float = 0.9,
         max_length: int = 100,
         repetition_penalty: float = 1.5,
+        threshold: float = 0.8
     ) -> Dict:
         """
         Generate paraphrase. You can set parameters
@@ -73,6 +74,7 @@ class Mt5Paraphraser(Paraphraser):
         :param top_p: top_p
         :param max_length: max_length
         :param repetition_penalty: repetition_penalty
+        :param threshold: param for cosine similarity range
         :return: dict with fields
         obligatory: origin, predictions;
         optional: warning, best_candidates, average_metrics
@@ -117,7 +119,7 @@ class Mt5Paraphraser(Paraphraser):
             sentence_res = {"predictions": final_outputs}
             best_candidates = []
             if self.range_cand:
-                best_candidates = range_candidates(final_outputs, sentence, self.smodel)
+                best_candidates = range_candidates(final_outputs, sentence, self.smodel, threshold=threshold)
                 sentence_res["best_candidates"] = best_candidates
             if self.make_eval:
                 if not best_candidates:

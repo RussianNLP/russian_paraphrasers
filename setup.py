@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="russian_paraphrasers",
-    version="0.0.1",
+    version="0.0.2",
     author="Alenusch",
     author_email="alenush93@gmail.com",
     description="Russian Paraphrasers (based on ru-gpt, mt5)",
@@ -19,6 +19,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    install_requires=["rusenttokenize", "transformers >= 4.0.1"],
+    install_requires=["nltk", "scipy", "transformers >= 4.0.1"],
     setup_requires=[]
 )

@@ -56,9 +56,13 @@ sentence = "Мама мыла раму."
 results = paraphraser.generate(
     sentence, n=10, temperature=1, 
     top_k=10, top_p=0.9, 
-    max_length=100, repetition_penalty=1.5
+    max_length=100, repetition_penalty=1.5,
+    threshold=0.7
 )
 ```
+You can set the `threshold` parameter to range candidates, 
+it measures by similarity score between original vector and the candidate vector.
+
 
 Results for one sentence look like this:
 
@@ -91,7 +95,8 @@ Results for one sentence look like this:
 
 All models were fine-tuned on the same dataset (see below) and uploaded to hugging_face.
 Available models:
-- [rugpt2-large](https://huggingface.co/sberbank-ai/rugpt2large) trained by Sberbank team https://github.com/sberbank-ai/ru-gpts
+- `gpt2` = [rugpt2-large](https://huggingface.co/sberbank-ai/rugpt2large) trained by Sberbank team https://github.com/sberbank-ai/ru-gpts
+- `gpt3` = [rugpt3large_based_on_gpt2](https://huggingface.co/sberbank-ai/rugpt3large_based_on_gpt2) trained by Sberbank team https://github.com/sberbank-ai/ru-gpts
 - [mt5-small](https://huggingface.co/google/mt5-small)
 - [mt5-base](https://huggingface.co/google/mt5-base)
 - [mt5-large](https://huggingface.co/google/mt5-large)

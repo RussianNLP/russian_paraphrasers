@@ -1,44 +1,46 @@
 from difflib import SequenceMatcher
-from sentence_transformers import util
-from _collections import defaultdict
-from rusenttokenize import ru_sent_tokenize
+from collections import defaultdict
+from scipy.spatial import distance
 import logging
+import nltk
 
 logger = logging.getLogger(__name__)
 
 
-def range_candidates(sentences, sent, smodel, top_k=3):
+def range_candidates(sentences, sent, smodel, top_k=3, threshold=0.9):
     """
     Range all possible candidates
     :param sentences: candidates
     :param sent: origin sentence reference
     :param smodel: sentence transformer model
     :param top_k: 3
+    :param threshold: threshold for cosine similarity score
     :return: list: top k best candidates
     """
     sentences = list(set(sentences))
-    candidates = []
-    for generated_sent in sentences:
-        if sent not in generated_sent:
-                if SequenceMatcher(None, sent, generated_sent).ratio() < 0.95:
-                    candidates.append(generated_sent)
 
-    good_hyp = set()
-    if candidates:
-        try:
-            paraphrases = util.paraphrase_mining(smodel, candidates)
-            for paraphrase in paraphrases:
-                score, i, j = paraphrase
-                if 0.75 < score < 1.00:
-                    good_hyp.add(sentences[j])
-                elif sent in sentences[j]:
-                    good_hyp.add(sentences[i])
-        except Exception as e:
-            logger.warning("Error: " + str(e))
-    if good_hyp:
-        hypothesis = list(good_hyp)[:top_k]
-    else:
-        hypothesis = candidates[:top_k]
+    try:
+        sentence_embeddings = smodel.encode(sentences)
+        origin_emb = smodel.encode([sent])
+        best_cands = []
+        for sentence, embedding in zip(sentences, sentence_embeddings):
+            if sent not in sentence:
+                if SequenceMatcher(None, sent, sentence).ratio() < 0.95:
+                    score = 1 - distance.cosine(embedding, origin_emb)
+                    if score >= threshold:
+                        if score != 1.0:
+                            if [score, sentence] not in best_cands:
+                                best_cands.append([score, sentence])
+        hypothesis = sorted(best_cands)[:top_k]
+        hypothesis = list([val for [_, val] in hypothesis])
+    except Exception as e:
+        logger.warning("Can't measure embeddings scores. Error: " + str(e))
+        cands = []
+        for sentence in sentences:
+            if sent not in sentence:
+                if SequenceMatcher(None, sent, sentence).ratio() < 0.95:
+                    cands.append(sentence)
+        hypothesis = list(set(cands))[:top_k]
     return hypothesis
 
 
@@ -66,7 +68,7 @@ def check_input(sentence):
     warning = None
     if len(sentence) <= 7:
         warning = "Your sentence is too short. The results can be strange."
-    sentences = ru_sent_tokenize(sentence)
+    sentences = nltk.sent_tokenize(sentence)
     if len(sentences) > 1:
         warning = "There are more than one sentence! We split it and paraphrase separately."
     return warning, sentences
