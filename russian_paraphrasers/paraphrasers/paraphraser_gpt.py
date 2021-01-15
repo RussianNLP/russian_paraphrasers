@@ -85,7 +85,6 @@ class GPTParaphraser(Paraphraser):
             result["warning"] = warning
 
         for sentence in sentences:
-            print(sentence)
             my_sentence = "<s>{} === ".format(sentence)
 
             encoded_prompt = self.tokenizer.encode(
