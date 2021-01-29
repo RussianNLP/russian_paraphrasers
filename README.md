@@ -16,13 +16,21 @@ pip install --upgrade pip
 pip install -r requirements.txt
 pip install russian_paraphrasers
 ```
+in this case you need to add `git+https://github.com/Maluuba/nlg-eval.git@master`
 
-Requirements.txt:
+Warning important in requirements.txt (versions!):
 ```
 sentence-transformers==0.4.0
 transformers>=4.0.1
 git+https://github.com/Maluuba/nlg-eval.git@master
 ```
+
+
+Or you can install last version from git:
+```
+pip install git+https://github.com/RussianNLP/russian_paraphrasers@master
+```
+
 
 ## Usage
 

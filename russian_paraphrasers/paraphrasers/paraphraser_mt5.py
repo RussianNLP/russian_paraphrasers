@@ -60,10 +60,11 @@ class Mt5Paraphraser(Paraphraser):
         n: int = 10,
         temperature: float = 1.0,
         top_k: int = 10,
-        top_p: float = 0.9,
-        max_length: int = 100,
+        top_p: float = 0.95,
+        max_length: int = 150,
         repetition_penalty: float = 1.5,
-        threshold: float = 0.8
+        threshold: float = 0.8,
+        strategy: str = "cs"
     ) -> Dict:
         """
         Generate paraphrase. You can set parameters
@@ -75,6 +76,7 @@ class Mt5Paraphraser(Paraphraser):
         :param max_length: max_length
         :param repetition_penalty: repetition_penalty
         :param threshold: param for cosine similarity range
+        :param strategy: param for range strategy
         :return: dict with fields
         obligatory: origin, predictions;
         optional: warning, best_candidates, average_metrics
@@ -86,9 +88,9 @@ class Mt5Paraphraser(Paraphraser):
 
         for sentence in sentences:
             final_outputs = []
-            sentence = "перефразируй: " + sentence + "</s>"
+            lsentence = "перефразируй: " + sentence + "</s>"
             encoding = self.tokenizer.encode_plus(
-                sentence, pad_to_max_length=True, return_tensors="pt"
+                lsentence, pad_to_max_length=True, return_tensors="pt"
             )
             input_ids, attention_masks = (
                 encoding["input_ids"].to(self.device),
@@ -119,7 +121,10 @@ class Mt5Paraphraser(Paraphraser):
             sentence_res = {"predictions": final_outputs}
             best_candidates = []
             if self.range_cand:
-                best_candidates = range_candidates(final_outputs, sentence, self.smodel, threshold=threshold)
+                best_candidates = range_candidates(
+                    final_outputs, sentence, self.smodel,
+                    threshold=threshold, strategy=strategy
+                )
                 sentence_res["best_candidates"] = best_candidates
             if self.make_eval:
                 if not best_candidates:

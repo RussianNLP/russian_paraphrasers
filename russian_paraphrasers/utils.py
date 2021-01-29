@@ -21,7 +21,8 @@ def adjust_length_to_model(length, max_sequence_length):
 
 def clean(text):
     if len(text) > 1:
-        text = nltk.sent_tokenize(text)[0]
+        text = text.split("===")[0]
+        text = text.split("\n")[0]
         text = re.sub('\\n', '\n', text)
         text = re.sub('<UNK>', '', text)
         text = re.sub('&amp;', '&', text)

@@ -4,6 +4,12 @@ from sentence_transformers import SentenceTransformer, util
 from nlgeval import NLGEval
 from typing import Any
 import torch
+import nltk
+
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
 
 
 class Paraphraser:
@@ -28,7 +34,7 @@ class Paraphraser:
         self.range_cand = range_cand
         self.device = torch.device("cpu")
         if self.range_cand:
-            self.smodel = SentenceTransformer("xlm-r-distilroberta-base-paraphrase-v1")
+            self.smodel = SentenceTransformer("paraphrase-xlm-r-multilingual-v1")
         if self.make_eval:
             self.ngeval = NLGEval(
                 metrics_to_omit=[
