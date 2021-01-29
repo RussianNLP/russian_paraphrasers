@@ -29,6 +29,7 @@ def range_by_allcs(sentences, sent, smodel, threshold=0.7):
             hypothesis.append(sentences[paraphrases[0][2]])
     return hypothesis
 
+
 def range_by_cs(sentences, sent, smodel, threshold=0.9):
     try:
         sentence_embeddings = smodel.encode(sentences)
@@ -55,23 +56,22 @@ def range_by_cs(sentences, sent, smodel, threshold=0.9):
     return hypothesis
 
 
-def range_candidates(sentences, sent, smodel, top_k=4, threshold=0.9, strategy="cs"):
+def range_candidates(sentences, sent, smodel, threshold=0.9, strategy="cs"):
     """
     Range all possible candidates by one of the strategies
     :param sentences: candidates
     :param sent: origin sentence reference
     :param smodel: sentence transformer model
-    :param top_k: 3
     :param threshold: threshold for cosine similarity score
     :param strategy: best by cosine similarity between sentence origin and generated  - flag "cs",
     best by cosine similary between all generated pairs - flag "all_cs"
-    :return: list: top k best candidates
+    :return: list: best candidates
     """
     sentences = list(set(sentences))
     if strategy == "cs":
-        hypothesis = range_by_cs(sentences, sent, smodel, threshold=threshold)[:top_k]
+        hypothesis = range_by_cs(sentences, sent, smodel, threshold=threshold)
     else:
-        hypothesis = range_by_allcs(sentences, sent, smodel, threshold=threshold)[:top_k]
+        hypothesis = range_by_allcs(sentences, sent, smodel, threshold=threshold)
     return hypothesis
 
 
@@ -93,6 +93,7 @@ def get_scores(ngeval, best_candidates, sentence):
     for key, value in average_metrics.items():
         metrics[key] = sum(value)/len(value)
     return metrics
+
 
 def check_input(sentence):
     warning = None
