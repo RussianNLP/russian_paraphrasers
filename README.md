@@ -69,7 +69,7 @@ results = paraphraser.generate(
 )
 ```
 You can set the `threshold` parameter to range candidates, 
-it measures by similarity score between original vector and the candidate vector.
+it is calculated as similarity score between original vector and the candidate vector.
 
 
 Results for one sentence look like this:
