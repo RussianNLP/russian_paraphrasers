@@ -118,4 +118,4 @@ All models were finetuned on the dataset based on two parts:
 1) part of the [ParaPhraser data](http://paraphraser.ru/download/), about 200k filtered examples
 2) filtered questions to chatbots and filtered subtitles from [here](https://github.com/rysshe/paraphrase/tree/master/data)
 
-The dataset will be available soon as well as the article with all the details.
+The dataset is in the folder `dataset`. The article is accepted and will be soon available.
